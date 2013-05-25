@@ -193,7 +193,7 @@ public class NomicDatabase {
 	 * @return
 	 */
 	public boolean IsInitialized() {
-		return Simulations == null;
+		return Simulations != null;
 	}
 	
 	public boolean IsEmpty() {
