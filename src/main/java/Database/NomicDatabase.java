@@ -133,8 +133,10 @@ public class NomicDatabase {
 	private VoteData loadVoteData(ResultSet kResults) throws SQLException {
 		Integer SimID = kResults.getInt("simId");
 		Integer timeCast = kResults.getInt("time");
+		String states = kResults.getString("state");
 		
 		VoteData voteData = new VoteData(SimID, timeCast);
+		voteData.parseStates(states);
 		
 		return voteData;
 	}
