@@ -16,10 +16,9 @@
   		<version>2.5-6.0.2</version>
   	</dependency>
   	<dependency>
-  		<groupId>it.cnr.isti.domoware</groupId>
-  		<artifactId>org.postgresql.jdbc4</artifactId>
-  		<version>8.3-603</version>
-  		<type>bundle</type>
+  		<groupId>postgresql</groupId>
+  		<artifactId>postgresql</artifactId>
+  		<version>9.1-901-1.jdbc4</version>
   	</dependency>
   </dependencies>
 </project>

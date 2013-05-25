@@ -3,13 +3,13 @@
 
 <web-app>
   <servlet>
-    <servlet-name>Hello</servlet-name>
-    <display-name>JWt Hello World example</display-name>
-    <description>JWt Hello World example</description>
-    <servlet-class>HelloTest.HelloMain</servlet-class>
+    <servlet-name>NomicUI</servlet-name>
+    <display-name>Nomic Games UI</display-name>
+    <description>Nomic Games UI</description>
+    <servlet-class>Web.NomicServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>Hello</servlet-name>
+    <servlet-name>NomicUI</servlet-name>
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
 </web-app>
