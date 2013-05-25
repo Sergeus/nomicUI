@@ -1,5 +1,7 @@
 package Web;
 
+import java.sql.SQLException;
+
 import Database.NomicDatabase;
 import eu.webtoolkit.jwt.WApplication;
 import eu.webtoolkit.jwt.WEnvironment;
@@ -11,7 +13,13 @@ public class NomicApplication extends WApplication {
 		
 		NomicDatabase db = new NomicDatabase();
 		
-		db.init();
+		if (!db.IsInitialized()) {
+			try {
+				db.init();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }
