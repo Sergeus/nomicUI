@@ -10,6 +10,10 @@ public class ModificationProposalData extends ProposalData {
 	
 	String NewRule;
 	
+	public ModificationProposalData() {
+		
+	}
+	
 	public ModificationProposalData(Integer simID, Integer time) {
 		super(simID, time, RuleChangeType.MODIFICATION);
 	}

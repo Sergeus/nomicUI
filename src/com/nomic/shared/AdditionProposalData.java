@@ -6,6 +6,10 @@ public class AdditionProposalData extends ProposalData {
 
 	String NewRule;
 	
+	public AdditionProposalData() {
+		
+	}
+	
 	public AdditionProposalData(Integer simID, Integer time) {
 		super(simID, time, RuleChangeType.ADDITION);
 	}

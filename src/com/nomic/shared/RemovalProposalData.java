@@ -5,6 +5,10 @@ public class RemovalProposalData extends ProposalData {
 
 	String OldRule;
 	
+	public RemovalProposalData() {
+		
+	}
+	
 	public RemovalProposalData(Integer simID, Integer time) {
 		super(simID, time, RuleChangeType.REMOVAL);
 	}

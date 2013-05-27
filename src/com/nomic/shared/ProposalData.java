@@ -32,6 +32,10 @@ public abstract class ProposalData {
 	
 	boolean Success;
 	
+	public ProposalData() {
+		
+	}
+	
 	public ProposalData(Integer simID, Integer time, RuleChangeType type) {
 		this.SimID = simID;
 		this.Time = time;

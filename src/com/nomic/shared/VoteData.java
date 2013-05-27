@@ -12,6 +12,10 @@ public class VoteData {
 	Integer TimeCast;
 	
 	Integer TurnCast;
+	
+	public VoteData() {
+		
+	}
 
 	public VoteData(Integer simID, Integer timeCast) {
 		super();

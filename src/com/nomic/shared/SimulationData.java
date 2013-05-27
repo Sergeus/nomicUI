@@ -25,6 +25,10 @@ public class SimulationData {
 	Collection<AgentData> Agents;
 	
 	Collection<ProposalData> Proposals;
+	
+	public SimulationData() {
+		
+	}
 
 	public SimulationData(Integer iD, String name,
 			Integer numTimeSteps) {
