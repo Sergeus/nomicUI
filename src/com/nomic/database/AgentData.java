@@ -1,4 +1,4 @@
-package Database;
+package com.nomic.database;
 
 import java.util.ArrayList;
 import java.util.Collection;

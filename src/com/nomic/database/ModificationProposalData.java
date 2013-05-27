@@ -1,4 +1,4 @@
-package Database;
+package com.nomic.database;
 
 public class ModificationProposalData extends ProposalData {
 	String OldRuleName;

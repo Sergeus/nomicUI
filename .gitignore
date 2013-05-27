@@ -32,3 +32,9 @@ local.properties
 # Presage2 Stuff #
 ##################
 target/
+
+# GWt Stuff #
+#############
+.gwt/
+gwt-unitCache/
+war/

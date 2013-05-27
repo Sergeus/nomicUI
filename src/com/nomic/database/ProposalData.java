@@ -1,6 +1,6 @@
-package Database;
+package com.nomic.database;
 
-import enums.RuleChangeType;
+import com.nomic.enums.RuleChangeType;
 
 public class ProposalData {
 	Integer SimID;
