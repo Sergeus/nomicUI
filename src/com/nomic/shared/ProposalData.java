@@ -55,4 +55,12 @@ public abstract class ProposalData {
 	public RuleChangeType getType() {
 		return Type;
 	}
+
+	public String getProposerName() {
+		return ProposerName;
+	}
+
+	public boolean isSuccess() {
+		return Success;
+	}
 }

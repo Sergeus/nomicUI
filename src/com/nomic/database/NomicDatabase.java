@@ -110,6 +110,12 @@ public class NomicDatabase {
 				
 				if (stmt.execute(ProposalDataQuery)) {
 					ResultSet pResults = stmt.getResultSet();
+					
+					while (pResults.next()) {
+						ProposalData propData = loadProposalData(pResults);
+						
+						getSimByID(propData.getSimID()).add(propData);
+					}
 				}
 			}
 		}
