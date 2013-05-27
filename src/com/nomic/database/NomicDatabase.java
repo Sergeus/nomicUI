@@ -11,6 +11,15 @@ import java.util.Properties;
 
 import org.postgresql.Driver;
 
+import com.nomic.shared.AdditionProposalData;
+import com.nomic.shared.AgentData;
+import com.nomic.shared.ModificationProposalData;
+import com.nomic.shared.ProposalData;
+import com.nomic.shared.RemovalProposalData;
+import com.nomic.shared.SimulationData;
+import com.nomic.shared.VoteData;
+
+
 public class NomicDatabase {
 	
 	static Collection<SimulationData> Simulations = null;
@@ -20,6 +29,7 @@ public class NomicDatabase {
 	String SimDataQuery = "SELECT * FROM simulations;";
 	String AgentDataQuery = "SELECT * FROM agents;";
 	String AgentTransientDataQuery = "SELECT * FROM agenttransient;";
+	String ProposalDataQuery = "SELECT * FROM environmenttransient;";
 	
 	public NomicDatabase() {
 		super();
@@ -98,7 +108,9 @@ public class NomicDatabase {
 					}
 				}
 				
-				// TODO: get proposals
+				if (stmt.execute(ProposalDataQuery)) {
+					ResultSet pResults = stmt.getResultSet();
+				}
 			}
 		}
 		else {
@@ -141,6 +153,32 @@ public class NomicDatabase {
 		voteData.parseStates(states);
 		
 		return voteData;
+	}
+	
+	private ProposalData loadProposalData(ResultSet kResults) throws SQLException {
+		Integer SimID = kResults.getInt("simId");
+		Integer time = kResults.getInt("time");
+		String state = kResults.getString("state");
+		
+		ProposalData propData;
+		
+		switch (ProposalData.getProposalType(state)) {
+		case ADDITION :
+			propData = new AdditionProposalData(SimID, time);
+			break;
+		case REMOVAL :
+			propData = new RemovalProposalData(SimID, time);
+			break;
+		case MODIFICATION :
+			propData = new ModificationProposalData(SimID, time);
+			break;
+		default :
+			propData = new AdditionProposalData(SimID, time);
+		}
+		
+		propData.ParseStates(state);
+		
+		return propData;
 	}
 	
 	/**
@@ -200,5 +238,9 @@ public class NomicDatabase {
 	
 	public boolean IsEmpty() {
 		return Empty;
+	}
+	
+	public SimulationData[] getSimulations() {
+		return (SimulationData[]) Simulations.toArray();
 	}
 }

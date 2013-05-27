@@ -1,7 +1,8 @@
-package com.nomic.database;
+package com.nomic.shared;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 
 public class AgentData {
 	Integer SimID;
@@ -15,6 +16,10 @@ public class AgentData {
 	Integer AverageSubSimLength;
 	
 	Collection<VoteData> VoteHistory;
+	
+	public AgentData() {
+		
+	}
 
 	public AgentData(Integer simID, String name) {
 		super();

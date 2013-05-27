@@ -1,16 +1,25 @@
 package com.nomic.client;
 
+import java.sql.SQLException;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Text;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.nomic.database.NomicDatabase;
+import com.nomic.shared.SimulationData;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -23,12 +32,22 @@ public class NomicUI implements EntryPoint {
 	private static final String SERVER_ERROR = "An error occurred while "
 			+ "attempting to contact the server. Please check your network "
 			+ "connection and try again.";
+	
+	private StackLayoutPanel sidePanel;
 
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting service.
 	 */
-	private final GreetingServiceAsync greetingService = GWT
-			.create(GreetingService.class);
+	private final NomicDBServiceAsync nomicDBService = GWT
+			.create(NomicDBService.class);
+	
+	public void displaySimData(SimulationData[] simulations) {
+		for (SimulationData simData : simulations) {
+			final Button simButton = new Button("Simulation " + simData.getID());
+			final HTML simContent = new HTML(simData.getName());
+			sidePanel.add(simContent, simButton, 4);
+		}
+	}
 
 	/**
 	 * This is the entry point method.
@@ -36,55 +55,27 @@ public class NomicUI implements EntryPoint {
 	public void onModuleLoad() {
 		Document.get().setTitle("NomicUI");
 		
-		final VerticalPanel topPanel = new VerticalPanel();
+		final Label mainTitle = new Label("Nomic");
+		mainTitle.setStyleName("Heading1");
+		RootPanel.get().add(mainTitle);
 		
-		final HorizontalPanel navBar = new HorizontalPanel();
+		sidePanel = new StackLayoutPanel(Unit.EM);
+		RootPanel.get().add(sidePanel);
 		
-		topPanel.add(navBar);
-		navBar.setStyleName("navbar");
-		navBar.addStyleDependentName("inverse");
-		navBar.addStyleDependentName("fixed-top");
+		AsyncCallback<SimulationData[]> callback = new AsyncCallback<SimulationData[]>() {
+			
+			@Override
+			public void onSuccess(SimulationData[] result) {
+				displaySimData(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				caught.printStackTrace();
+			}
+		};
 		
-		final HorizontalPanel innerNavBar = new HorizontalPanel();
-		
-		innerNavBar.setStyleName("navbar-inner");
-		navBar.add(innerNavBar);
-		
-		final HorizontalPanel navContainer = new HorizontalPanel();
-		navContainer.setStyleName("container");
-		innerNavBar.add(navContainer);
-		
-		final Label navMain = new Label("Nomic");
-		navMain.setStyleName("brand");
-		
-		final Button test1 = new Button("Test1");
-		test1.addStyleName("btn");
-		test1.addStyleName("btn-navbar");
-		//test1.addStyleDependentName("navbar");
-		final Button test2 = new Button("Test2");
-		test2.setStyleName("btn");
-		//test2.addStyleDependentName("navbar");
-		
-		navContainer.add(navMain);
-		
-		final HorizontalPanel navcollapse = new HorizontalPanel();
-		navcollapse.addStyleName("nav-collapse");
-		navcollapse.addStyleName("collapse");
-		
-		navcollapse.add(test1);
-		navcollapse.add(test2);
-		
-		navContainer.add(navcollapse);
-		
-		final Label mainTitle = new Label("Nomic Games");
-		mainTitle.setStyleName("hero-unit");
-		
-		
-		
-		topPanel.add(mainTitle);
-		
-		RootPanel.get().add(topPanel);
-		
+		nomicDBService.getSimulationData(callback);
 		
 //		final Button sendButton = new Button("Send");
 //		final TextBox nameField = new TextBox();

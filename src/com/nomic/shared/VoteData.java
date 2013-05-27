@@ -1,6 +1,6 @@
-package com.nomic.database;
+package com.nomic.shared;
 
-import com.nomic.enums.VoteType;
+
 
 public class VoteData {
 	Integer SimID;
