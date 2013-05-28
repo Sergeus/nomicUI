@@ -1,23 +1,38 @@
 package com.nomic.client;
 
+import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import org.apache.commons.el.DivideOperator;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.nomic.shared.AdditionProposalData;
+import com.nomic.shared.ModificationProposalData;
+import com.nomic.shared.ProposalData;
+import com.nomic.shared.RemovalProposalData;
+import com.nomic.shared.RuleChangeType;
 import com.nomic.shared.SimulationData;
+import com.nomic.shared.VoteData;
+import com.nomic.shared.VoteType;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -35,7 +50,25 @@ public class NomicUI implements EntryPoint {
 	
 	private VerticalPanel mainPanel;
 	
-	private Label ActiveSimLabel;
+	private VerticalPanel SimContentPanel = new VerticalPanel();
+	
+	private Label ActiveSimLabel = new Label();
+	
+	private Label NumberOfAgents = new Label();
+	
+	private Label SimTimeLength = new Label();
+	
+	private Label SimTurnLength = new Label();
+	
+	private Label SimRoundLength = new Label();
+	
+	private Label SimWon = new Label();
+	
+	private Integer ActiveSimVisibleTimeSteps = 0;
+	
+	private Button simProgressButton;
+	
+	private SimulationData ActiveSimData;
 
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting service.
@@ -45,12 +78,13 @@ public class NomicUI implements EntryPoint {
 	
 	public void displaySimData(Collection<SimulationData> simulations) {
 		ArrayList<SimulationData> simArray = (ArrayList<SimulationData>) simulations;
-		ActiveSimLabel.setText(simArray.get(0).getName());
+		SetActiveSimulation(simArray.get(0));
 		
 		for (SimulationData simData : simulations) {
 			final Button simButton = new Button("Simulation " + simData.getID());
 			final HTML simContent = new HTML("This sim has " + simData.getNumAgents() + " agents.");
 			simButton.setWidth("100%");
+			simButton.addClickHandler(new SimButtonClickHandler(this, simData));
 			sidePanel.add(simContent, simButton, 4);
 		}
 	}
@@ -68,7 +102,7 @@ public class NomicUI implements EntryPoint {
 		
 		final Label mainTitle = new Label("Nomic");
 		mainTitle.setStyleName("Heading1");
-		topPanel.addNorth(mainTitle, 10);
+		//topPanel.addNorth(mainTitle, 10);
 		
 		sidePanel = new StackLayoutPanel(Unit.EM);
 		topPanel.addWest(sidePanel, 15);
@@ -82,13 +116,54 @@ public class NomicUI implements EntryPoint {
 		nameLabel.setStyleName("Footer1");
 		footerPanel.add(nameLabel);
 		
+		final ScrollPanel mainScroll = new ScrollPanel();
+		topPanel.add(mainScroll);
+		
 		mainPanel = new VerticalPanel();
-		topPanel.add(mainPanel);
+		mainScroll.add(mainPanel);
 		mainPanel.setWidth("100%");
 		
-		ActiveSimLabel = new Label();
-		ActiveSimLabel.setStyleName("Heading2");
+		ActiveSimLabel.setStyleName("hero-unit");
 		mainPanel.add(ActiveSimLabel);
+		
+		final HorizontalPanel simDataPanel = new HorizontalPanel();
+		mainPanel.add(simDataPanel);
+		
+		simDataPanel.setWidth("100%");
+		simDataPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		
+		simDataPanel.add(NumberOfAgents);
+		simDataPanel.add(SimTimeLength);
+		simDataPanel.add(SimTurnLength);
+		simDataPanel.add(SimRoundLength);
+		simDataPanel.add(SimWon);
+		
+		NumberOfAgents.setStyleName("SimHeadings");
+		SimTimeLength.setStyleName("SimHeadings");
+		SimTurnLength.setStyleName("SimHeadings");
+		SimRoundLength.setStyleName("SimHeadings");
+		SimWon.setStyleName("SimHeadings");
+		
+		final Label divider = new Label(" ");
+		divider.setStyleName("Divider");
+		divider.setWidth("100%");
+		mainPanel.add(divider);
+		
+		mainPanel.add(SimContentPanel);
+		SimContentPanel.setWidth("100%");
+		SimContentPanel.setHeight("100%");
+		SimContentPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
+		
+		simProgressButton = new Button("Next Time Step");
+		footerPanel.add(simProgressButton);
+		
+		simProgressButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				DisplayNextSimTimeStep();
+			}
+		});
 		
 		AsyncCallback<Collection<SimulationData>> callback = new AsyncCallback<Collection<SimulationData>>() {
 			
@@ -104,5 +179,153 @@ public class NomicUI implements EntryPoint {
 		};
 		
 		nomicDBService.getSimulationData(callback);
+	}
+	
+	public void SetActiveSimulation(SimulationData simData) {
+		ActiveSimData = simData;
+		
+		ActiveSimLabel.setText(simData.getName());
+		NumberOfAgents.setText("Agents: " + simData.getNumAgents());
+		SimTimeLength.setText("Time steps: " + simData.getNumTimeSteps());
+		SimTurnLength.setText("Turns: " + simData.getNumTurns());
+		SimRoundLength.setText("Rounds: " + simData.getNumRounds());
+		
+		if (!simData.isWon()) {
+			SimWon.setText("No winner.");
+		}
+		else {
+			SimWon.setText(simData.getWinnerName() + " has won!");
+		}
+		
+		ActiveSimVisibleTimeSteps = 0;
+		for (int i = SimContentPanel.getWidgetCount() - 1; i >= 0; i--) {
+			SimContentPanel.remove(i);
+		}
+		simProgressButton.setEnabled(true);
+	}
+	
+	public void DisplayNextSimTimeStep() {
+		AddSimtimeStep(ActiveSimData, ActiveSimVisibleTimeSteps);
+		ActiveSimVisibleTimeSteps++;
+		
+		if (ActiveSimVisibleTimeSteps == ActiveSimData.getNumTimeSteps()) {
+			simProgressButton.setEnabled(false);
+		}
+	}
+	
+	public void AddSimtimeStep(SimulationData simData, Integer timeStep) {
+		final HorizontalPanel simTimeDataPanel = new HorizontalPanel();
+		
+		final Label timeLabel = new Label("Time " + timeStep);
+		simTimeDataPanel.add(timeLabel);
+		timeLabel.setStyleName("SimData");
+		
+		// Voting arrangement
+		if (simData.IsVoteTimeStep(timeStep)) {
+			final Label voteLabel = new Label("Voting");
+			simTimeDataPanel.add(voteLabel);
+			voteLabel.setStyleName("SimData");
+			
+			for (VoteData vote : simData.getVotes(timeStep)) {
+				final Label casterName = new Label(vote.getCasterName() + ": ");
+				simTimeDataPanel.add(casterName);
+				casterName.setStyleName("SimData");
+				final Label voteValue = new Label(vote.getType().toString());
+				simTimeDataPanel.add(voteValue);
+				casterName.setStyleName("SimData");
+				
+				voteValue.setStyleName("Vote");
+				
+				if (vote.getType() == VoteType.YES) {
+					voteValue.addStyleDependentName("Yes");
+				}
+				else {
+					voteValue.addStyleDependentName("No");
+				}
+			}
+		}
+		else if (simData.IsProposalTimeStep(timeStep)) {
+			final Label proposeLabel = new Label("Rule Proposal");
+			simTimeDataPanel.add(proposeLabel);
+			proposeLabel.setStyleName("SimData");
+			
+			for (ProposalData proposal : simData.getProposals(timeStep)) {
+				final Label casterName = new Label();
+				casterName.setText("Proposer: " + proposal.getProposerName());
+				casterName.setStyleName("SimData");
+				simTimeDataPanel.add(casterName);
+				
+				final Label ruleTypeLabel = new Label();
+				ruleTypeLabel.setText("Type: ");
+				ruleTypeLabel.setStyleName("SimData");
+				simTimeDataPanel.add(ruleTypeLabel);
+				
+				final Label ruleType = new Label();
+				RuleChangeType changeType = proposal.getType();
+				ruleType.setText(changeType.toString());
+				ruleType.setStyleName("Rule");
+				
+				simTimeDataPanel.add(ruleType);
+				
+				switch (changeType) {
+				case ADDITION :
+					AdditionProposalData addProp = (AdditionProposalData)proposal;
+					ruleType.addStyleDependentName("Addition");
+					
+					final Label AddNewRuleName = new Label();
+					AddNewRuleName.setText("New Rule Name: " + addProp.getNewRuleName());
+					AddNewRuleName.setStyleName("SimData");
+					simTimeDataPanel.add(AddNewRuleName);
+					break;
+				case MODIFICATION :
+					ModificationProposalData modProp = (ModificationProposalData)proposal;
+					ruleType.addStyleDependentName("Modification");
+					
+					final Label ModOldRuleName = new Label();
+					ModOldRuleName.setText("Old Rule Name: " + modProp.getOldRuleName());
+					ModOldRuleName.setStyleName("SimData");
+					simTimeDataPanel.add(ModOldRuleName);
+					
+					final Label ModNewRuleName = new Label();
+					ModNewRuleName.setText("New Rule Name: " + modProp.getNewRuleName());
+					ModNewRuleName.setStyleName("SimData");
+					simTimeDataPanel.add(ModNewRuleName);
+					break;
+				case REMOVAL :
+					RemovalProposalData remProp = (RemovalProposalData)proposal;
+					ruleType.addStyleDependentName("Removal");
+					
+					final Label RemOldRuleName = new Label();
+					RemOldRuleName.setText("Old Rule Name: " + remProp.getOldRuleName());
+					RemOldRuleName.setStyleName("SimData");
+					simTimeDataPanel.add(RemOldRuleName);
+					break;
+				default :
+					ruleType.setStyleName("SimData");
+					break;
+				}
+				
+				final Label successLabel = new Label();
+				successLabel.setStyleName("Vote");
+				
+				if (proposal.isSuccess()) {
+					successLabel.setText("Success");
+					successLabel.addStyleDependentName("Yes");
+				}
+				else {
+					successLabel.setText("Failure");
+					successLabel.addStyleDependentName("No");
+				}
+				simTimeDataPanel.add(successLabel);
+			}
+		}
+		
+		SimContentPanel.add(simTimeDataPanel);
+		
+		//simTimeDataPanel.setWidth("100%");
+		
+		if (timeStep % 2 == 0) {
+			simTimeDataPanel.addStyleDependentName("Secondary");
+		}
 	}
 }

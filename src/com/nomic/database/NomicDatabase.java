@@ -74,7 +74,7 @@ public class NomicDatabase {
 		if (stmt.execute(SimDataQuery)) {
 			ResultSet sResults = stmt.getResultSet();
 			
-			System.out.println("Row limit of " + stmt.getMaxRows());
+			//System.out.println("Row limit of " + stmt.getMaxRows());
 			
 			while (sResults.next()) {
 				
@@ -90,7 +90,7 @@ public class NomicDatabase {
 				while (aResults.next()) {
 					AgentData agentData = loadAgentData(aResults);
 					
-					System.out.println("SimID: " + agentData.getSimID());
+					//System.out.println("SimID: " + agentData.getSimID());
 					
 					getSimByID(agentData.getSimID())
 							.add(agentData);
@@ -102,7 +102,7 @@ public class NomicDatabase {
 					while (atResults.next()) {
 						VoteData voteData = loadVoteData(atResults);
 						
-						System.out.println("Sim id " + voteData.getSimID() + " caster " + voteData.getCasterName());
+						//System.out.println("Sim id " + voteData.getSimID() + " caster " + voteData.getCasterName());
 						
 						getAgentBySimIDAndAgentName(voteData.getSimID(), 
 								voteData.getCasterName())
@@ -201,7 +201,7 @@ public class NomicDatabase {
 				return simData;
 		}
 		
-		System.out.println("No sim for ID " + ID);
+		//System.out.println("No sim for ID " + ID);
 		
 		return null;
 	}

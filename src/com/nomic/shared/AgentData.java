@@ -44,11 +44,11 @@ public class AgentData implements Serializable {
 			
 			if (subState.contains("\"type\"=>\"")) {
 				Type = terms[3];
-				System.out.println("Got agent type: " + Type);
+				//System.out.println("Got agent type: " + Type);
 			}
 			else if (subState.contains("NumSubSims")) {
 				NumSubSims = Integer.parseInt(terms[3]);
-				System.out.println("Got NumSubSims: " + NumSubSims);
+				//System.out.println("Got NumSubSims: " + NumSubSims);
 			}
 			else if (subState.contains("AverageSubSimLength")) {
 				AverageSubSimLength = Integer.parseInt(terms[3]);
@@ -78,5 +78,20 @@ public class AgentData implements Serializable {
 
 	public Integer getAverageSubSimLength() {
 		return AverageSubSimLength;
+	}
+	
+	/**
+	 * Gets vote data from the parameter sim time.
+	 * Returns null if no vote data found.
+	 * @param simTime
+	 * @return
+	 */
+	public VoteData getVote(Integer simTime) {
+		for (VoteData vote : VoteHistory) {
+			if (vote.getTimeCast().equals(simTime))
+				return vote;
+		}
+		
+		return null;
 	}
 }

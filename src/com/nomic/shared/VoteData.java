@@ -63,4 +63,8 @@ public class VoteData implements Serializable {
 	public Integer getTimeCast() {
 		return TimeCast;
 	}
+	
+	public Integer getTurnCast() {
+		return TurnCast;
+	}
 }

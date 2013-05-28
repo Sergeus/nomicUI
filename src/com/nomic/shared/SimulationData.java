@@ -48,7 +48,7 @@ public class SimulationData implements Serializable {
 	}
 	
 	public void ParseParameters(String parameters) {
-		System.out.println("Parsing parameters for sim " + ID);
+		//System.out.println("Parsing parameters for sim " + ID);
 		
 		String[] params = parameters.split(",");
 		
@@ -59,23 +59,23 @@ public class SimulationData implements Serializable {
 		
 			if (param.contains("\"Won\"=>\"")) {
 				Won = Boolean.parseBoolean(terms[3]);
-				System.out.println("Got won: " + Won);
+				//System.out.println("Got won: " + Won);
 			}
 			else if (param.contains("NumTurns")) {
 				NumTurns = Integer.parseInt(terms[3]);
-				System.out.println("Got NumTurns: " + NumTurns);
+				//System.out.println("Got NumTurns: " + NumTurns);
 			}
 			else if (param.contains("NumRounds")) {
 				NumRounds = Integer.parseInt(terms[3]);
-				System.out.println("Got NumRounds: " + NumRounds);
+				//System.out.println("Got NumRounds: " + NumRounds);
 			}
 			else if (param.contains("NumAgents")) {
 				NumAgents = Integer.parseInt(terms[3]);
-				System.out.println("Got NumAgents: " + NumAgents);
+				//System.out.println("Got NumAgents: " + NumAgents);
 			}
 			else if (param.contains("Winner")) {
 				WinnerName = terms[3];
-				System.out.println("Got winner name: " + WinnerName);
+				//System.out.println("Got winner name: " + WinnerName);
 			}
 		}
 	}
@@ -127,5 +127,50 @@ public class SimulationData implements Serializable {
 
 	public String getWinnerName() {
 		return WinnerName;
+	}
+	
+	/**
+	 * Returns true if the parameter time step was used for voting
+	 * @return
+	 */
+	public boolean IsVoteTimeStep(Integer time) {
+		for (AgentData agent : Agents) {
+			if (agent.getVote(time) != null)
+				return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean IsProposalTimeStep(Integer time) {
+		for (ProposalData proposal : Proposals) {
+			if (proposal.getTime().equals(time))
+				return true;
+		}
+		
+		return false;
+	}
+	
+	public ArrayList<VoteData> getVotes(Integer time) {
+		ArrayList<VoteData> votes = new ArrayList<VoteData>();
+		
+		for (AgentData agent : Agents) {
+			VoteData vote = agent.getVote(time);
+			if (vote != null)
+				votes.add(vote);
+		}
+		
+		return votes;
+	}
+	
+	public ArrayList<ProposalData> getProposals(Integer time) {
+		ArrayList<ProposalData> props = new ArrayList<ProposalData>();
+		
+		for (ProposalData prop : Proposals) {
+			if (prop.getTime().equals(time))
+				props.add(prop);
+		}
+		
+		return props;
 	}
 }
