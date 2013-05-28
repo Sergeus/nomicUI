@@ -1,10 +1,16 @@
 package com.nomic.shared;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 
-public class AgentData {
+public class AgentData implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	Integer SimID;
 	
 	String Type;

@@ -1,9 +1,15 @@
 package com.nomic.shared;
 
+import java.io.Serializable;
 
 
-public abstract class ProposalData {
+
+public abstract class ProposalData implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	static String ModificationString = "\"Type\"=>\"MODIFICATION\"";
 	static String AdditionString = "\"Type\"=>\"ADDITION\"";
 	static String RemovalString = "\"Type\"=>\"REMOVAL\"";

@@ -1,6 +1,7 @@
 package com.nomic.server;
 
 import java.sql.SQLException;
+import java.util.Collection;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.nomic.client.NomicDBService;
@@ -9,7 +10,12 @@ import com.nomic.shared.SimulationData;
 
 public class NomicDBServiceImpl extends RemoteServiceServlet implements NomicDBService {
 
-	public SimulationData[] getSimulationData() {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public Collection<SimulationData> getSimulationData() {
 		NomicDatabase db = new NomicDatabase();
 		
 		if (!db.IsInitialized()) {

@@ -1,6 +1,13 @@
 package com.nomic.shared;
 
-public class RemovalProposalData extends ProposalData {
+import java.io.Serializable;
+
+public class RemovalProposalData extends ProposalData implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	String OldRuleName;
 
 	String OldRule;

@@ -1,7 +1,14 @@
 package com.nomic.shared;
 
+import java.io.Serializable;
 
-public class ModificationProposalData extends ProposalData {
+
+public class ModificationProposalData extends ProposalData implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	String OldRuleName;
 	
 	String OldRule;

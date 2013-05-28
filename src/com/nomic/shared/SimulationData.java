@@ -1,11 +1,17 @@
 package com.nomic.shared;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 
-public class SimulationData {
+public class SimulationData implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	Integer ID;
 	
 	String Name;
@@ -84,7 +90,7 @@ public class SimulationData {
 	
 	public AgentData getAgentByName(String agentName) {
 		for (AgentData agentData : Agents) {
-			if (agentData.getName() == agentName)
+			if (agentData.getName().equals(agentName))
 				return agentData;
 		}
 		

@@ -1,8 +1,15 @@
 package com.nomic.shared;
 
+import java.io.Serializable;
 
 
-public class VoteData {
+
+public class VoteData implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	Integer SimID;
 	
 	String CasterName;

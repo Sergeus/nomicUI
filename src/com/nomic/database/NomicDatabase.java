@@ -34,7 +34,7 @@ public class NomicDatabase {
 	public NomicDatabase() {
 		super();
 	}
-	
+
 	/**
 	 * Loads simulation data from the Presage2 SQL database.
 	 * @throws SQLException
@@ -101,6 +101,8 @@ public class NomicDatabase {
 					
 					while (atResults.next()) {
 						VoteData voteData = loadVoteData(atResults);
+						
+						System.out.println("Sim id " + voteData.getSimID() + " caster " + voteData.getCasterName());
 						
 						getAgentBySimIDAndAgentName(voteData.getSimID(), 
 								voteData.getCasterName())
@@ -246,7 +248,7 @@ public class NomicDatabase {
 		return Empty;
 	}
 	
-	public SimulationData[] getSimulations() {
-		return (SimulationData[]) Simulations.toArray();
+	public Collection<SimulationData> getSimulations() {
+		return Simulations;
 	}
 }

@@ -1,24 +1,22 @@
 package com.nomic.client;
 
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.Text;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.nomic.database.NomicDatabase;
 import com.nomic.shared.SimulationData;
 
 /**
@@ -34,6 +32,10 @@ public class NomicUI implements EntryPoint {
 			+ "connection and try again.";
 	
 	private StackLayoutPanel sidePanel;
+	
+	private VerticalPanel mainPanel;
+	
+	private Label ActiveSimLabel;
 
 	/**
 	 * Create a remote service proxy to talk to the server-side Greeting service.
@@ -41,10 +43,14 @@ public class NomicUI implements EntryPoint {
 	private final NomicDBServiceAsync nomicDBService = GWT
 			.create(NomicDBService.class);
 	
-	public void displaySimData(SimulationData[] simulations) {
+	public void displaySimData(Collection<SimulationData> simulations) {
+		ArrayList<SimulationData> simArray = (ArrayList<SimulationData>) simulations;
+		ActiveSimLabel.setText(simArray.get(0).getName());
+		
 		for (SimulationData simData : simulations) {
 			final Button simButton = new Button("Simulation " + simData.getID());
-			final HTML simContent = new HTML(simData.getName());
+			final HTML simContent = new HTML("This sim has " + simData.getNumAgents() + " agents.");
+			simButton.setWidth("100%");
 			sidePanel.add(simContent, simButton, 4);
 		}
 	}
@@ -55,17 +61,39 @@ public class NomicUI implements EntryPoint {
 	public void onModuleLoad() {
 		Document.get().setTitle("NomicUI");
 		
+		final DockLayoutPanel topPanel = new DockLayoutPanel(Unit.EM);
+		RootLayoutPanel.get().add(topPanel);
+		
+		topPanel.setWidth("100%");
+		
 		final Label mainTitle = new Label("Nomic");
 		mainTitle.setStyleName("Heading1");
-		RootPanel.get().add(mainTitle);
+		topPanel.addNorth(mainTitle, 10);
 		
 		sidePanel = new StackLayoutPanel(Unit.EM);
-		RootPanel.get().add(sidePanel);
+		topPanel.addWest(sidePanel, 15);
 		
-		AsyncCallback<SimulationData[]> callback = new AsyncCallback<SimulationData[]>() {
+		final HorizontalPanel footerPanel = new HorizontalPanel();
+		footerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		footerPanel.setWidth("100%");
+		topPanel.addSouth(footerPanel, 4);
+		
+		final Label nameLabel = new Label("Stuart Holland");
+		nameLabel.setStyleName("Footer1");
+		footerPanel.add(nameLabel);
+		
+		mainPanel = new VerticalPanel();
+		topPanel.add(mainPanel);
+		mainPanel.setWidth("100%");
+		
+		ActiveSimLabel = new Label();
+		ActiveSimLabel.setStyleName("Heading2");
+		mainPanel.add(ActiveSimLabel);
+		
+		AsyncCallback<Collection<SimulationData>> callback = new AsyncCallback<Collection<SimulationData>>() {
 			
 			@Override
-			public void onSuccess(SimulationData[] result) {
+			public void onSuccess(Collection<SimulationData> result) {
 				displaySimData(result);
 			}
 			
@@ -76,116 +104,5 @@ public class NomicUI implements EntryPoint {
 		};
 		
 		nomicDBService.getSimulationData(callback);
-		
-//		final Button sendButton = new Button("Send");
-//		final TextBox nameField = new TextBox();
-//		nameField.setText("GWT User");
-//		final Label errorLabel = new Label();
-//	
-//
-//		// We can add style names to widgets
-//		sendButton.addStyleName("sendButton");
-//
-//		// Add the nameField and sendButton to the RootPanel
-//		// Use RootPanel.get() to get the entire body element
-//		RootPanel.get("nameFieldContainer").add(nameField);
-//		RootPanel.get("sendButtonContainer").add(sendButton);
-//		RootPanel.get("errorLabelContainer").add(errorLabel);
-//
-//		// Focus the cursor on the name field when the app loads
-//		nameField.setFocus(true);
-//		nameField.selectAll();
-//
-//		// Create the popup dialog box
-//		final DialogBox dialogBox = new DialogBox();
-//		dialogBox.setText("Remote Procedure Call");
-//		dialogBox.setAnimationEnabled(true);
-//		final Button closeButton = new Button("Close");
-//		// We can set the id of a widget by accessing its Element
-//		closeButton.getElement().setId("closeButton");
-//		final Label textToServerLabel = new Label();
-//		final HTML serverResponseLabel = new HTML();
-//		VerticalPanel dialogVPanel = new VerticalPanel();
-//		dialogVPanel.addStyleName("dialogVPanel");
-//		dialogVPanel.add(new HTML("<b>Sending name to the server:</b>"));
-//		dialogVPanel.add(textToServerLabel);
-//		dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
-//		dialogVPanel.add(serverResponseLabel);
-//		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-//		dialogVPanel.add(closeButton);
-//		dialogBox.setWidget(dialogVPanel);
-//
-//		// Add a handler to close the DialogBox
-//		closeButton.addClickHandler(new ClickHandler() {
-//			public void onClick(ClickEvent event) {
-//				dialogBox.hide();
-//				sendButton.setEnabled(true);
-//				sendButton.setFocus(true);
-//			}
-//		});
-//
-//		// Create a handler for the sendButton and nameField
-//		class MyHandler implements ClickHandler, KeyUpHandler {
-//			/**
-//			 * Fired when the user clicks on the sendButton.
-//			 */
-//			public void onClick(ClickEvent event) {
-//				sendNameToServer();
-//			}
-//
-//			/**
-//			 * Fired when the user types in the nameField.
-//			 */
-//			public void onKeyUp(KeyUpEvent event) {
-//				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-//					sendNameToServer();
-//				}
-//			}
-//
-//			/**
-//			 * Send the name from the nameField to the server and wait for a response.
-//			 */
-//			private void sendNameToServer() {
-//				// First, we validate the input.
-//				errorLabel.setText("");
-//				String textToServer = nameField.getText();
-//				if (!FieldVerifier.isValidName(textToServer)) {
-//					errorLabel.setText("Please enter at least four characters");
-//					return;
-//				}
-//
-//				// Then, we send the input to the server.
-//				sendButton.setEnabled(false);
-//				textToServerLabel.setText(textToServer);
-//				serverResponseLabel.setText("");
-//				greetingService.greetServer(textToServer,
-//						new AsyncCallback<String>() {
-//							public void onFailure(Throwable caught) {
-//								// Show the RPC error message to the user
-//								dialogBox
-//										.setText("Remote Procedure Call - Failure");
-//								serverResponseLabel
-//										.addStyleName("serverResponseLabelError");
-//								serverResponseLabel.setHTML(SERVER_ERROR);
-//								dialogBox.center();
-//								closeButton.setFocus(true);
-//							}
-//
-//							public void onSuccess(String result) {
-//								dialogBox.setText("Remote Procedure Call");
-//								serverResponseLabel
-//										.removeStyleName("serverResponseLabelError");
-//								serverResponseLabel.setHTML(result);
-//								dialogBox.center();
-//								closeButton.setFocus(true);
-//							}
-//						});
-//			}
-//		}
-//
-//		// Add a handler to send the name to the server
-//		MyHandler handler = new MyHandler();
-//		sendButton.addClickHandler(handler);
-//		nameField.addKeyUpHandler(handler);
 	}
 }
