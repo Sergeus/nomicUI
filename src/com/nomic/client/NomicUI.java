@@ -6,6 +6,7 @@ import java.util.Collection;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.HRElement;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -17,6 +18,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -145,6 +147,10 @@ public class NomicUI implements EntryPoint {
 		divider.setStyleName("Divider");
 		divider.setWidth("100%");
 		mainPanel.add(divider);
+		
+		HTML hrTag = new HTML("<hr/>");
+		
+		mainPanel.add(hrTag);
 		
 		mainPanel.add(SimContentPanel);
 		SimContentPanel.setWidth("100%");
