@@ -28,6 +28,8 @@ public class SimulationData implements Serializable {
 	
 	String WinnerName;
 	
+	Integer WinTime;
+	
 	Collection<AgentData> Agents;
 	
 	Collection<ProposalData> Proposals;
@@ -76,6 +78,10 @@ public class SimulationData implements Serializable {
 			else if (param.contains("Winner")) {
 				WinnerName = terms[3];
 				//System.out.println("Got winner name: " + WinnerName);
+			}
+			else if (param.contains("\"WinTime\"=>\"")) {
+				WinTime = Integer.parseInt(terms[3]);
+				//System.out.println("Got win time: " + WinTime);
 			}
 		}
 	}
@@ -133,7 +139,7 @@ public class SimulationData implements Serializable {
 	 * Returns true if the parameter time step was used for voting
 	 * @return
 	 */
-	public boolean IsVoteTimeStep(Integer time) {
+	public boolean isVoteTimeStep(Integer time) {
 		for (AgentData agent : Agents) {
 			if (agent.getVote(time) != null)
 				return true;
@@ -142,13 +148,31 @@ public class SimulationData implements Serializable {
 		return false;
 	}
 	
-	public boolean IsProposalTimeStep(Integer time) {
+	public boolean isProposalTimeStep(Integer time) {
 		for (ProposalData proposal : Proposals) {
 			if (proposal.getTime().equals(time))
 				return true;
 		}
 		
 		return false;
+	}
+	
+	public boolean isWinTimeStep(Integer time) {
+		if (isWon() && time.equals(WinTime)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	public boolean isBeforeWin(Integer time) {
+		if (!isWon()) {
+			return true;
+		}
+		else {
+			return time < WinTime;
+		}
 	}
 	
 	public ArrayList<VoteData> getVotes(Integer time) {

@@ -1,10 +1,7 @@
 package com.nomic.client;
 
-import java.awt.Container;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.apache.commons.el.DivideOperator;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -12,6 +9,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -21,7 +19,6 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -221,7 +218,7 @@ public class NomicUI implements EntryPoint {
 		timeLabel.setStyleName("SimData");
 		
 		// Voting arrangement
-		if (simData.IsVoteTimeStep(timeStep)) {
+		if (simData.isVoteTimeStep(timeStep)) {
 			final Label voteLabel = new Label("Voting");
 			simTimeDataPanel.add(voteLabel);
 			voteLabel.setStyleName("SimData");
@@ -244,7 +241,7 @@ public class NomicUI implements EntryPoint {
 				}
 			}
 		}
-		else if (simData.IsProposalTimeStep(timeStep)) {
+		else if (simData.isProposalTimeStep(timeStep)) {
 			final Label proposeLabel = new Label("Rule Proposal");
 			simTimeDataPanel.add(proposeLabel);
 			proposeLabel.setStyleName("SimData");
@@ -318,6 +315,26 @@ public class NomicUI implements EntryPoint {
 				}
 				simTimeDataPanel.add(successLabel);
 			}
+		}
+		else if (simData.isWinTimeStep(timeStep)) {
+			final Label winLabel = new Label();
+			winLabel.setText(simData.getWinnerName() + " Wins!");
+			winLabel.setStyleName("WinLabel");
+			simTimeDataPanel.add(winLabel);
+			
+			simProgressButton.setEnabled(false);
+		}
+		else if (timeStep == 0) {
+			final Label init = new Label();
+			init.setText("Initialization");
+			init.setStyleName("SimData");
+			simTimeDataPanel.add(init);
+		}
+		else {
+			final Label idle = new Label();
+			idle.setText("No proposals");
+			idle.setStyleName("SimData");
+			simTimeDataPanel.add(idle);
 		}
 		
 		SimContentPanel.add(simTimeDataPanel);
