@@ -277,8 +277,27 @@ public class NomicUI implements EntryPoint {
 		
 		if (ActiveSimVisibleTimeSteps == ActiveSimData.getNumTimeSteps()
 				|| ActiveSimData.isOver(ActiveSimVisibleTimeSteps)) {
+			AddDoneMessage();
 			simProgressButton.setEnabled(false);
 		}
+	}
+	
+	public void AddDoneMessage() {
+		final HorizontalPanel donePanel = new HorizontalPanel();
+		
+		donePanel.setWidth("100%");
+		
+		final Label timeLabel = new Label();
+		timeLabel.setText("Time " + ActiveSimVisibleTimeSteps);
+		timeLabel.setStyleName("DoneLabel");
+		donePanel.add(timeLabel);
+		
+		final Label doneLabel = new Label();
+		doneLabel.setText("Simulation Ended");
+		doneLabel.setStyleName("DoneLabel");
+		donePanel.add(doneLabel);
+		
+		SimContentPanel.add(donePanel);
 	}
 	
 	public void AddSimtimeStep(SimulationData simData, Integer timeStep) {
