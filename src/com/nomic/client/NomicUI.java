@@ -6,12 +6,9 @@ import java.util.Collection;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.HRElement;
-import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -19,13 +16,14 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.StackLayoutPanel;
+import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.nomic.shared.AdditionProposalData;
+import com.nomic.shared.AgentData;
 import com.nomic.shared.ModificationProposalData;
 import com.nomic.shared.ProposalData;
 import com.nomic.shared.RemovalProposalData;
@@ -71,7 +69,7 @@ public class NomicUI implements EntryPoint {
 	private SimulationData ActiveSimData;
 
 	/**
-	 * Create a remote service proxy to talk to the server-side Greeting service.
+	 * Create a remote service proxy to talk to the server-side NomicDB service.
 	 */
 	private final NomicDBServiceAsync nomicDBService = GWT
 			.create(NomicDBService.class);
@@ -82,11 +80,64 @@ public class NomicUI implements EntryPoint {
 		
 		for (SimulationData simData : simulations) {
 			final Button simButton = new Button("Simulation " + simData.getID());
-			final HTML simContent = new HTML("This sim has " + simData.getNumAgents() + " agents.");
+			
+			final ScrollPanel simContent = constructSimSummaryPanel(simData);
 			simButton.setWidth("100%");
 			simButton.addClickHandler(new SimButtonClickHandler(this, simData));
-			sidePanel.add(simContent, simButton, 4);
+			sidePanel.add(simContent, simButton, 3);
 		}
+		
+		// Height must be explicit since StackLayoutPanels don't properly report their size to
+		// parent panels, so the scroll panel won't work properly without this.
+		// Height is a function of the number of subpanels (each heading is 3em tall).
+		// The extra 15 is for the content panel of the currently selected item,
+		// only one of which will ever be visible at a time.
+		sidePanel.setHeight((3*sidePanel.getWidgetCount() + 15) + "em");
+	}
+	
+	private ScrollPanel constructSimSummaryPanel(SimulationData simData) {
+		final ScrollPanel topScroll = new ScrollPanel();
+		final VerticalPanel contentPanel = new VerticalPanel();
+		topScroll.add(contentPanel);
+		
+		final Label agentNumberLabel = new Label();
+		agentNumberLabel.setText("Agents: " + simData.getNumAgents());
+		agentNumberLabel.setStyleName("SimSummary");
+		contentPanel.add(agentNumberLabel);
+		
+		for (AgentData agentData : simData.getAgentData()) {
+			final Label agentSummary = new Label();
+			agentSummary.setText(agentData.getName() + ": " + agentData.getType());
+			agentSummary.setStyleName("SimSummary");
+			agentSummary.addStyleDependentName("AgentLabel");
+			contentPanel.add(agentSummary);
+			
+			final Label agentSubSims = new Label();
+			agentSubSims.setText("Subsims: " + agentData.getNumSubSims());
+			agentSubSims.setStyleName("SimSummary");
+			contentPanel.add(agentSubSims);
+			
+			final Label agentSubSimLength = new Label();
+			agentSubSimLength.setText("Subsim length: " + agentData.getAverageSubSimLength());
+			agentSubSimLength.setStyleName("SimSummary");
+			contentPanel.add(agentSubSimLength);
+			
+			final Label agentYesVotes = new Label();
+			agentYesVotes.setText("Yes votes: " + agentData.getNumVotes(VoteType.YES));
+			agentYesVotes.setStyleName("SimSummary");
+			contentPanel.add(agentYesVotes);
+			
+			final Label agentNoVotes = new Label();
+			agentNoVotes.setText("No votes: " + agentData.getNumVotes(VoteType.NO));
+			agentNoVotes.setStyleName("SimSummary");
+			contentPanel.add(agentNoVotes);
+		}
+		
+		// Slightly smaller than the size allowed for the content panel, so the scroll bar
+		// buttons fit too
+		topScroll.setHeight("14em");
+		
+		return topScroll;
 	}
 
 	/**
@@ -105,7 +156,11 @@ public class NomicUI implements EntryPoint {
 		//topPanel.addNorth(mainTitle, 10);
 		
 		sidePanel = new StackLayoutPanel(Unit.EM);
-		topPanel.addWest(sidePanel, 15);
+		
+		final ScrollPanel sideScroll = new ScrollPanel();
+		sideScroll.add(sidePanel);
+		
+		topPanel.addWest(sideScroll, 15);
 		
 		final HorizontalPanel footerPanel = new HorizontalPanel();
 		footerPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);

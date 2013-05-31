@@ -94,6 +94,10 @@ public class SimulationData implements Serializable {
 		Proposals.add(proposalData);
 	}
 	
+	public Collection<AgentData> getAgentData() {
+		return Agents;
+	}
+	
 	public AgentData getAgentByName(String agentName) {
 		for (AgentData agentData : Agents) {
 			if (agentData.getName().equals(agentName))

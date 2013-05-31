@@ -94,4 +94,14 @@ public class AgentData implements Serializable {
 		
 		return null;
 	}
+	
+	public int getNumVotes(VoteType type) {
+		int total = 0;
+		for (VoteData vote : VoteHistory) {
+			if (vote.getType() == type)
+				total++;
+		}
+		
+		return total;
+	}
 }
