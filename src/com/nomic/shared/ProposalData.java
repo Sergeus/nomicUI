@@ -13,6 +13,7 @@ public abstract class ProposalData implements Serializable {
 	static String ModificationString = "\"Type\"=>\"MODIFICATION\"";
 	static String AdditionString = "\"Type\"=>\"ADDITION\"";
 	static String RemovalString = "\"Type\"=>\"REMOVAL\"";
+	static String NoChangeString = "\"Type\"=>\"NONE\"";
 	
 	public static RuleChangeType getProposalType(String states) {
 		if (states.contains(ModificationString)) {
@@ -20,6 +21,9 @@ public abstract class ProposalData implements Serializable {
 		}
 		else if (states.contains(RemovalString)) {
 			return RuleChangeType.REMOVAL;
+		}
+		else if (states.contains(NoChangeString)) {
+			return RuleChangeType.NONE;
 		}
 		else {
 			return RuleChangeType.ADDITION;

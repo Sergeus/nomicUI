@@ -79,7 +79,7 @@ public class SimulationData implements Serializable {
 				WinnerName = terms[3];
 				//System.out.println("Got winner name: " + WinnerName);
 			}
-			else if (param.contains("\"WinTime\"=>\"")) {
+			else if (param.contains("WinTime")) {
 				WinTime = Integer.parseInt(terms[3]);
 				//System.out.println("Got win time: " + WinTime);
 			}

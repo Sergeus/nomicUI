@@ -14,6 +14,7 @@ import org.postgresql.Driver;
 import com.nomic.shared.AdditionProposalData;
 import com.nomic.shared.AgentData;
 import com.nomic.shared.ModificationProposalData;
+import com.nomic.shared.NoProposalData;
 import com.nomic.shared.ProposalData;
 import com.nomic.shared.RemovalProposalData;
 import com.nomic.shared.SimulationData;
@@ -179,6 +180,9 @@ public class NomicDatabase {
 			break;
 		case MODIFICATION :
 			propData = new ModificationProposalData(SimID, time);
+			break;
+		case NONE :
+			propData = new NoProposalData(SimID, time);
 			break;
 		default :
 			propData = new AdditionProposalData(SimID, time);

@@ -7,6 +7,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.HRElement;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -223,8 +224,18 @@ public class NomicUI implements EntryPoint {
 		simTimeDataPanel.add(timeLabel);
 		timeLabel.setStyleName("SimData");
 		
+		if (simData.isWinTimeStep(timeStep)) {
+			final Label winLabel = new Label();
+			winLabel.setText(simData.getWinnerName() + " Wins!");
+			winLabel.setStyleName("WinLabel");
+			simTimeDataPanel.add(winLabel);
+			timeLabel.setStyleName("WinLabel");
+			simTimeDataPanel.setWidth("100%");
+			
+			simProgressButton.setEnabled(false);
+		}
 		// Voting arrangement
-		if (simData.isVoteTimeStep(timeStep)) {
+		else if (simData.isVoteTimeStep(timeStep)) {
 			final Label voteLabel = new Label("Voting");
 			simTimeDataPanel.add(voteLabel);
 			voteLabel.setStyleName("SimData");
@@ -303,6 +314,8 @@ public class NomicUI implements EntryPoint {
 					RemOldRuleName.setStyleName("SimData");
 					simTimeDataPanel.add(RemOldRuleName);
 					break;
+				case NONE :
+					ruleType.addStyleDependentName("None");
 				default :
 					ruleType.setStyleName("SimData");
 					break;
@@ -315,20 +328,12 @@ public class NomicUI implements EntryPoint {
 					successLabel.setText("Success");
 					successLabel.addStyleDependentName("Yes");
 				}
-				else {
+				else if (changeType != RuleChangeType.NONE) {
 					successLabel.setText("Failure");
 					successLabel.addStyleDependentName("No");
 				}
 				simTimeDataPanel.add(successLabel);
 			}
-		}
-		else if (simData.isWinTimeStep(timeStep)) {
-			final Label winLabel = new Label();
-			winLabel.setText(simData.getWinnerName() + " Wins!");
-			winLabel.setStyleName("WinLabel");
-			simTimeDataPanel.add(winLabel);
-			
-			simProgressButton.setEnabled(false);
 		}
 		else if (timeStep == 0) {
 			final Label init = new Label();
