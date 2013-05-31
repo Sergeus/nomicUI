@@ -10,6 +10,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.rpc.core.java.util.Collections;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -23,11 +24,13 @@ import com.google.gwt.user.client.ui.StackLayoutPanel;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.nomic.shared.AdditionProposalData;
+import com.nomic.shared.AgentComparator;
 import com.nomic.shared.AgentData;
 import com.nomic.shared.ModificationProposalData;
 import com.nomic.shared.ProposalData;
 import com.nomic.shared.RemovalProposalData;
 import com.nomic.shared.RuleChangeType;
+import com.nomic.shared.SimulationComparator;
 import com.nomic.shared.SimulationData;
 import com.nomic.shared.VoteData;
 import com.nomic.shared.VoteType;
@@ -76,6 +79,7 @@ public class NomicUI implements EntryPoint {
 	
 	public void displaySimData(Collection<SimulationData> simulations) {
 		ArrayList<SimulationData> simArray = (ArrayList<SimulationData>) simulations;
+		java.util.Collections.sort(simArray, new SimulationComparator());
 		SetActiveSimulation(simArray.get(0));
 		
 		for (SimulationData simData : simulations) {
@@ -105,7 +109,11 @@ public class NomicUI implements EntryPoint {
 		agentNumberLabel.setStyleName("SimSummary");
 		contentPanel.add(agentNumberLabel);
 		
-		for (AgentData agentData : simData.getAgentData()) {
+		ArrayList<AgentData> agents = simData.getAgentData();
+		
+		java.util.Collections.sort(agents, new AgentComparator());
+		
+		for (AgentData agentData : agents) {
 			final Label agentSummary = new Label();
 			agentSummary.setText(agentData.getName() + ": " + agentData.getType());
 			agentSummary.setStyleName("SimSummary");
@@ -267,7 +275,8 @@ public class NomicUI implements EntryPoint {
 		AddSimtimeStep(ActiveSimData, ActiveSimVisibleTimeSteps);
 		ActiveSimVisibleTimeSteps++;
 		
-		if (ActiveSimVisibleTimeSteps == ActiveSimData.getNumTimeSteps()) {
+		if (ActiveSimVisibleTimeSteps == ActiveSimData.getNumTimeSteps()
+				|| ActiveSimData.isOver(ActiveSimVisibleTimeSteps)) {
 			simProgressButton.setEnabled(false);
 		}
 	}

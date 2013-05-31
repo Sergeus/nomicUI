@@ -17,6 +17,8 @@ public class AgentData implements Serializable {
 	
 	String Name;
 	
+	Integer SequentialID = -1;
+	
 	Integer NumSubSims;
 	
 	Integer AverageSubSimLength;
@@ -53,6 +55,9 @@ public class AgentData implements Serializable {
 			else if (subState.contains("AverageSubSimLength")) {
 				AverageSubSimLength = Integer.parseInt(terms[3]);
 			}
+			else if (subState.contains("SeqID")) {
+				SequentialID = Integer.parseInt(terms[3]);
+			}
 		}
 	}
 	
@@ -70,6 +75,10 @@ public class AgentData implements Serializable {
 
 	public String getName() {
 		return Name;
+	}
+	
+	public Integer getSequentialID() {
+		return SequentialID;
 	}
 
 	public Integer getNumSubSims() {

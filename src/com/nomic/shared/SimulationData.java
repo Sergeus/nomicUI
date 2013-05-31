@@ -30,7 +30,7 @@ public class SimulationData implements Serializable {
 	
 	Integer WinTime;
 	
-	Collection<AgentData> Agents;
+	ArrayList<AgentData> Agents;
 	
 	Collection<ProposalData> Proposals;
 	
@@ -94,7 +94,7 @@ public class SimulationData implements Serializable {
 		Proposals.add(proposalData);
 	}
 	
-	public Collection<AgentData> getAgentData() {
+	public ArrayList<AgentData> getAgentData() {
 		return Agents;
 	}
 	
@@ -133,6 +133,17 @@ public class SimulationData implements Serializable {
 
 	public boolean isWon() {
 		return Won;
+	}
+	
+	public boolean isOver(Integer time) {
+		for (int i=time; i < getNumTimeSteps(); i++) {
+			if (getProposals(i).size() > 0)
+				return false;
+			if (getVotes(i).size() > 0)
+				return false;
+		}
+		
+		return true;
 	}
 
 	public String getWinnerName() {
