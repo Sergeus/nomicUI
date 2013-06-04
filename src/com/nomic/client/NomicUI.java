@@ -69,6 +69,8 @@ public class NomicUI implements EntryPoint {
 	
 	private Button simProgressButton;
 	
+	private Button simShowAllButton;
+	
 	private SimulationData ActiveSimData;
 
 	/**
@@ -176,7 +178,8 @@ public class NomicUI implements EntryPoint {
 		topPanel.addSouth(footerPanel, 4);
 		
 		final Label nameLabel = new Label("Stuart Holland");
-		nameLabel.setStyleName("Footer1");
+		nameLabel.setStyleName("Footer");
+		nameLabel.addStyleDependentName("Label");
 		footerPanel.add(nameLabel);
 		
 		final ScrollPanel mainScroll = new ScrollPanel();
@@ -207,11 +210,6 @@ public class NomicUI implements EntryPoint {
 		SimRoundLength.setStyleName("SimHeadings");
 		SimWon.setStyleName("SimHeadings");
 		
-		final Label divider = new Label(" ");
-		divider.setStyleName("Divider");
-		divider.setWidth("100%");
-		mainPanel.add(divider);
-		
 		HTML hrTag = new HTML("<hr/>");
 		
 		mainPanel.add(hrTag);
@@ -221,7 +219,20 @@ public class NomicUI implements EntryPoint {
 		SimContentPanel.setHeight("100%");
 		SimContentPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
 		
+		simShowAllButton = new Button("Show Whole Sim");
+		simShowAllButton.setStyleName("Footer");
+		footerPanel.add(simShowAllButton);
+		
+		simShowAllButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				DisplayWholeSim();
+			}
+		});
+		
 		simProgressButton = new Button("Next Time Step");
+		simProgressButton.setStyleName("Footer");
 		footerPanel.add(simProgressButton);
 		
 		simProgressButton.addClickHandler(new ClickHandler() {
@@ -269,6 +280,7 @@ public class NomicUI implements EntryPoint {
 			SimContentPanel.remove(i);
 		}
 		simProgressButton.setEnabled(true);
+		simShowAllButton.setEnabled(true);
 	}
 	
 	public void DisplayNextSimTimeStep() {
@@ -276,10 +288,18 @@ public class NomicUI implements EntryPoint {
 		ActiveSimVisibleTimeSteps++;
 		
 		if (ActiveSimVisibleTimeSteps == ActiveSimData.getNumTimeSteps()
-				|| ActiveSimData.isOver(ActiveSimVisibleTimeSteps)) {
+				|| (ActiveSimData.isOver(ActiveSimVisibleTimeSteps) && !ActiveSimData.isWon())) {
 			AddDoneMessage();
 			simProgressButton.setEnabled(false);
+			simShowAllButton.setEnabled(false);
 		}
+	}
+	
+	public void DisplayWholeSim() {
+		while (simProgressButton.isEnabled()) {
+			DisplayNextSimTimeStep();
+		}
+		simShowAllButton.setEnabled(false);
 	}
 	
 	public void AddDoneMessage() {
@@ -316,6 +336,7 @@ public class NomicUI implements EntryPoint {
 			simTimeDataPanel.setWidth("100%");
 			
 			simProgressButton.setEnabled(false);
+			simShowAllButton.setEnabled(false);
 		}
 		// Voting arrangement
 		else if (simData.isVoteTimeStep(timeStep)) {
