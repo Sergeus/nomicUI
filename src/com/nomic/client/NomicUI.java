@@ -327,19 +327,8 @@ public class NomicUI implements EntryPoint {
 		simTimeDataPanel.add(timeLabel);
 		timeLabel.setStyleName("SimData");
 		
-		if (simData.isWinTimeStep(timeStep)) {
-			final Label winLabel = new Label();
-			winLabel.setText(simData.getWinnerName() + " Wins!");
-			winLabel.setStyleName("WinLabel");
-			simTimeDataPanel.add(winLabel);
-			timeLabel.setStyleName("WinLabel");
-			simTimeDataPanel.setWidth("100%");
-			
-			simProgressButton.setEnabled(false);
-			simShowAllButton.setEnabled(false);
-		}
 		// Voting arrangement
-		else if (simData.isVoteTimeStep(timeStep)) {
+		if (simData.isVoteTimeStep(timeStep)) {
 			final Label voteLabel = new Label("Voting");
 			simTimeDataPanel.add(voteLabel);
 			voteLabel.setStyleName("SimData");
@@ -444,6 +433,17 @@ public class NomicUI implements EntryPoint {
 			init.setText("Initialization");
 			init.setStyleName("SimData");
 			simTimeDataPanel.add(init);
+		}
+		else if (simData.isWinTimeStep(timeStep)) {
+			final Label winLabel = new Label();
+			winLabel.setText(simData.getWinnerName() + " Wins!");
+			winLabel.setStyleName("WinLabel");
+			simTimeDataPanel.add(winLabel);
+			timeLabel.setStyleName("WinLabel");
+			simTimeDataPanel.setWidth("100%");
+			
+			simProgressButton.setEnabled(false);
+			simShowAllButton.setEnabled(false);
 		}
 		else {
 			final Label idle = new Label();

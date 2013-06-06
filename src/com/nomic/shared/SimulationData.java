@@ -176,6 +176,9 @@ public class SimulationData implements Serializable {
 		if (isWon() && time.equals(WinTime)) {
 			return true;
 		}
+		else if (isWon() && isOver(time)) {
+			return true;
+		}
 		else {
 			return false;
 		}
