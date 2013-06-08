@@ -7,4 +7,6 @@ import com.nomic.shared.SimulationData;
 
 public interface NomicDBServiceAsync {
 	void getSimulationData(AsyncCallback<Collection<SimulationData>> callback);
+	
+	void makeCSV(Integer id, AsyncCallback<Void> callback);
 }

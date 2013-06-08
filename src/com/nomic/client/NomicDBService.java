@@ -9,4 +9,6 @@ import com.nomic.shared.SimulationData;
 @RemoteServiceRelativePath("nomicDB")
 public interface NomicDBService extends RemoteService {
 	Collection<SimulationData> getSimulationData();
+	
+	void makeCSV(Integer id);
 }

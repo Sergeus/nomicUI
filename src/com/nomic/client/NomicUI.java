@@ -71,7 +71,20 @@ public class NomicUI implements EntryPoint {
 	
 	private Button simShowAllButton;
 	
+	private Button simMakeCSVButton;
+	
 	private SimulationData ActiveSimData;
+	
+	private AsyncCallback<Void> blankCallback = new AsyncCallback<Void>() {
+		
+		@Override
+		public void onSuccess(Void result) {
+		}
+		
+		@Override
+		public void onFailure(Throwable caught) {
+		}
+	};
 
 	/**
 	 * Create a remote service proxy to talk to the server-side NomicDB service.
@@ -219,6 +232,18 @@ public class NomicUI implements EntryPoint {
 		SimContentPanel.setHeight("100%");
 		SimContentPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
 		
+		simMakeCSVButton = new Button("Make CSV");
+		simMakeCSVButton.setStyleName("Footer");
+		footerPanel.add(simMakeCSVButton);
+		
+		simMakeCSVButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				makeActiveSimCSV();
+			}
+		});
+		
 		simShowAllButton = new Button("Show Whole Sim");
 		simShowAllButton.setStyleName("Footer");
 		footerPanel.add(simShowAllButton);
@@ -320,6 +345,10 @@ public class NomicUI implements EntryPoint {
 		SimContentPanel.add(donePanel);
 	}
 	
+	public void makeActiveSimCSV() {
+		nomicDBService.makeCSV(ActiveSimData.getID(), blankCallback);
+	}
+	
 	public void AddSimtimeStep(SimulationData simData, Integer timeStep) {
 		final HorizontalPanel simTimeDataPanel = new HorizontalPanel();
 		
@@ -350,6 +379,17 @@ public class NomicUI implements EntryPoint {
 					voteValue.addStyleDependentName("No");
 				}
 			}
+		}
+		else if (simData.isWinTimeStep(timeStep)) {
+			final Label winLabel = new Label();
+			winLabel.setText(simData.getWinnerName() + " Wins!");
+			winLabel.setStyleName("WinLabel");
+			simTimeDataPanel.add(winLabel);
+			timeLabel.setStyleName("WinLabel");
+			simTimeDataPanel.setWidth("100%");
+			
+			simProgressButton.setEnabled(false);
+			simShowAllButton.setEnabled(false);
 		}
 		else if (simData.isProposalTimeStep(timeStep)) {
 			final Label proposeLabel = new Label("Rule Proposal");
@@ -433,17 +473,6 @@ public class NomicUI implements EntryPoint {
 			init.setText("Initialization");
 			init.setStyleName("SimData");
 			simTimeDataPanel.add(init);
-		}
-		else if (simData.isWinTimeStep(timeStep)) {
-			final Label winLabel = new Label();
-			winLabel.setText(simData.getWinnerName() + " Wins!");
-			winLabel.setStyleName("WinLabel");
-			simTimeDataPanel.add(winLabel);
-			timeLabel.setStyleName("WinLabel");
-			simTimeDataPanel.setWidth("100%");
-			
-			simProgressButton.setEnabled(false);
-			simShowAllButton.setEnabled(false);
 		}
 		else {
 			final Label idle = new Label();

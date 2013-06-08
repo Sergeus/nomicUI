@@ -30,4 +30,20 @@ public class NomicDBServiceImpl extends RemoteServiceServlet implements NomicDBS
 		return db.getSimulations();
 	}
 
+	@Override
+	public void makeCSV(Integer id) {
+		// TODO Auto-generated method stub
+		NomicDatabase db = new NomicDatabase();
+		
+		if (!db.IsInitialized()) {
+			try {
+				db.init();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		db.makeCSV(id);
+	}
+
 }

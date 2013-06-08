@@ -1,5 +1,9 @@
 package com.nomic.database;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -7,11 +11,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Properties;
 
 import org.postgresql.Driver;
 
 import com.nomic.shared.AdditionProposalData;
+import com.nomic.shared.AgentComparator;
 import com.nomic.shared.AgentData;
 import com.nomic.shared.ModificationProposalData;
 import com.nomic.shared.NoProposalData;
@@ -19,6 +25,7 @@ import com.nomic.shared.ProposalData;
 import com.nomic.shared.RemovalProposalData;
 import com.nomic.shared.SimulationData;
 import com.nomic.shared.VoteData;
+import com.nomic.shared.VoteType;
 
 
 public class NomicDatabase {
@@ -31,6 +38,8 @@ public class NomicDatabase {
 	String AgentDataQuery = "SELECT * FROM agents;";
 	String AgentTransientDataQuery = "SELECT * FROM agenttransient;";
 	String ProposalDataQuery = "SELECT * FROM environmenttransient;";
+	
+	String simFilePath = "/home/stuart/Documents/";
 	
 	public NomicDatabase() {
 		super();
@@ -191,6 +200,36 @@ public class NomicDatabase {
 		propData.ParseStates(state);
 		
 		return propData;
+	}
+	
+	/**
+	 * Creates a CSV file for results presentation of the sim with the parameter ID
+	 * @param simID
+	 */
+	public void makeCSV(Integer simID) {
+		File simFile = new File(simFilePath + "Simulation" + simID + ".csv");
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(simFile));
+			
+			SimulationData simData = getSimByID(simID);
+			
+			writer.write("Simulation" + simID + "\n");
+			
+			writer.write("Agent Name,Type,SubSims,Subsim Length,Yes Votes,No Votes\n");
+			
+			Collections.sort(simData.getAgentData(), new AgentComparator());
+			
+			for (AgentData agent : simData.getAgentData()) {
+				writer.write(agent.getName() + "," + agent.getType() + "," + agent.getNumSubSims() + ","
+						+ agent.getAverageSubSimLength() + "," + agent.getNumVotes(VoteType.YES)
+						+ "," + agent.getNumVotes(VoteType.NO) + "\n");
+			}
+			
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**
