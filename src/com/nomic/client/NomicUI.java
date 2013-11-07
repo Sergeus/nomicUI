@@ -37,6 +37,11 @@ import com.nomic.shared.VoteType;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
+ * 
+ * NomicUI interface entry point. SQL DB with simulation data already populated must be available
+ * on the web server.
+ * 
+ * @author Stuart Holland
  */
 public class NomicUI implements EntryPoint {
 	/**
@@ -114,6 +119,12 @@ public class NomicUI implements EntryPoint {
 		sidePanel.setHeight((3*sidePanel.getWidgetCount() + 15) + "em");
 	}
 	
+	/**
+	 * Creates the panel visible in the left hand stack layout panel which displays
+	 * data that varies only at simulation level. (Eg. number of agents)
+	 * @param simData
+	 * @return
+	 */
 	private ScrollPanel constructSimSummaryPanel(SimulationData simData) {
 		final ScrollPanel topScroll = new ScrollPanel();
 		final VerticalPanel contentPanel = new VerticalPanel();
@@ -284,6 +295,10 @@ public class NomicUI implements EntryPoint {
 		nomicDBService.getSimulationData(callback);
 	}
 	
+	/**
+	 * Switches the currently active simulation, clears any currently open simulation data.
+	 * @param simData New simulation to display.
+	 */
 	public void SetActiveSimulation(SimulationData simData) {
 		ActiveSimData = simData;
 		
@@ -308,6 +323,9 @@ public class NomicUI implements EntryPoint {
 		simShowAllButton.setEnabled(true);
 	}
 	
+	/**
+	 * Displays the next time step of the currently active simulation
+	 */
 	public void DisplayNextSimTimeStep() {
 		AddSimtimeStep(ActiveSimData, ActiveSimVisibleTimeSteps);
 		ActiveSimVisibleTimeSteps++;
@@ -320,6 +338,9 @@ public class NomicUI implements EntryPoint {
 		}
 	}
 	
+	/**
+	 * Displays the entire contents of the currently selected simulation
+	 */
 	public void DisplayWholeSim() {
 		while (simProgressButton.isEnabled()) {
 			DisplayNextSimTimeStep();
@@ -327,6 +348,9 @@ public class NomicUI implements EntryPoint {
 		simShowAllButton.setEnabled(false);
 	}
 	
+	/**
+	 * Adds the 'Simulation Ended' message in red for when a simulation has finished
+	 */
 	public void AddDoneMessage() {
 		final HorizontalPanel donePanel = new HorizontalPanel();
 		

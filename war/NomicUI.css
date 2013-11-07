@@ -1,0 +1,146 @@
+.Heading1 {
+	font-size: 4em;
+	font-weight: bold;
+	color : #777777;
+	margin: 40px 0px 70px;
+	text-align: center;
+}
+
+.Heading2 {
+	font-size: 2em;
+	font-weight: bold;
+	color: black;
+	margin: 40px 0px 70px;
+	text-align: center;
+}
+
+.Divider {
+  padding: 0 5px;
+  color: #ccc;
+}
+
+.SimHeadings {
+	font-size: 1.3em;
+	font-weight: bold;
+}
+
+.SimData {
+	font-size: 1.3em;
+	margin: 20px 10px 20px 10px;
+}
+
+.SimData-Secondary {
+	background-color: #A8A8A8;
+}
+
+.SimSummary {
+	
+}
+
+.SimSummary-AgentLabel {
+	font-weight: bold;
+}
+
+.Vote {
+	font-size: 1.5em;
+	margin: 20px 10px 20px 10px;
+}
+
+.Vote-Yes {
+	font-weight: bold;
+	font-color: #0A4500;
+	background-color: #82E371;
+}
+
+.Vote-No {
+	font-weight: bold;
+	font-color: #450000;
+	background-color: #E37171;
+}
+
+.Rule {
+	font-size: 1.5em;
+	margin: 20px 10px 20px 10px;
+}
+
+.Rule-Addition {
+	font-color: #0A4500;
+	background-color: #82E371;
+}
+
+.Rule-Removal {
+	font-color: #450000;
+	background-color: #E37171;
+}
+
+.Rule-Modification {
+	font-color: #000045;
+	background-color: #7175E3;
+}
+
+.Rule-None {
+	font-color: #383838;
+	background-color: #A6A6A6;
+}
+
+.Footer-Label {
+	font-size: 1em;
+	color: #777777;
+	text-align: center;
+}
+
+.Footer {
+	margin: 20px 0px 20px;
+}
+
+.WinLabel {
+	font-size: 2em;
+	margin: 20px 30px 20px 30px;
+	text-align: center;
+	text-color: #454500;
+	background-color: #E3E171;
+}
+
+.DoneLabel {
+	font-size: 2em;
+	margin: 20px 30px 20px 30px;
+	text-align: center;
+	text-color: #450000;
+	background-color: #E37171;
+}
+
+/** Example rules used by the template application (remove for your app) */
+/*
+h1 {
+  font-size: 2em;
+  font-weight: bold;
+  color: #777777;
+  margin: 40px 0px 70px;
+  text-align: center;
+}
+
+.sendButton {
+  display: block;
+  font-size: 16pt;
+}
+
+/** Most GWT widgets already have a style name defined */
+/*
+.gwt-DialogBox {
+  width: 400px;
+}
+
+.dialogVPanel {
+  margin: 5px;
+}
+
+.serverResponseLabelError {
+  color: red;
+}
+
+/** Set ids using widget.getElement().setId("idOfElement") */
+/*
+#closeButton {
+  margin: 15px 6px 6px;
+}
+*/

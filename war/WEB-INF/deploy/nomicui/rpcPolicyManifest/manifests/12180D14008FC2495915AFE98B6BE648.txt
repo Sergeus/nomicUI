@@ -1,0 +1,2 @@
+serviceClass: com.nomic.client.NomicDBService
+path: AEF2244FCCBDE0DB6A241EB4B2006B03.gwt.rpc

@@ -173,6 +173,12 @@ public class NomicDatabase {
 		return voteData;
 	}
 	
+	/**
+	 * Loads proposal data out of a single row of the results from the relevant SQL query
+	 * @param kResults Should be already moved to a new row in the results
+	 * @return The proposal data object corresponding to the current row
+	 * @throws SQLException
+	 */
 	private ProposalData loadProposalData(ResultSet kResults) throws SQLException {
 		Integer SimID = kResults.getInt("simId");
 		Integer time = kResults.getInt("time");

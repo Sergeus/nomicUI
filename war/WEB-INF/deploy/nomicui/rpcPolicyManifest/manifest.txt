@@ -1,0 +1,3 @@
+# Module nomicui
+# RPC service class, partial path of RPC policy file
+com.nomic.client.NomicDBService, AEF2244FCCBDE0DB6A241EB4B2006B03.gwt.rpc
